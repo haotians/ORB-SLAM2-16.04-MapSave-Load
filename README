@@ -1,0 +1,8 @@
+This Project is based on Ubuntu 16.04 and Realsense R200
+todo:
+
+1. Using UKF to fuse VO data and wheel encoder data
+2. Using depth information to handle white wall situation
+3. Combine octomap with ORB MAP
+
+Approximate Deadline for those update, 2017/03
