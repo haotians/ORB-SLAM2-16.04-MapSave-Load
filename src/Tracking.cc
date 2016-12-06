@@ -133,7 +133,8 @@ Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer,
 
     if(sensor==System::STEREO || sensor==System::RGBD)
     {
-        mThDepth = mbf*(float)fSettings["ThDepth"]/fx;
+        //mThDepth = mbf*(float)fSettings["ThDepth"]/fx;
+        mThDepth = (float)fSettings["ThDepth"];
         cout << endl << "Depth Threshold (Close/Far Points): " << mThDepth << endl;
     }
 
@@ -291,6 +292,7 @@ void Tracking::Track()
     else
     {
         // System is initialized. Track Frame.
+        // mark here, bOK is the internal state of this single shot tracking, mState is the overall state of the tracking thread
         bool bOK;
 
         // Initial camera pose estimation using motion model or relocalization (if tracking is lost)
@@ -304,13 +306,16 @@ void Tracking::Track()
                 // Local Mapping might have changed some MapPoints tracked in last frame
                 CheckReplacedInLastFrame();
 
+                //assume I am stop or not too far from a recent keyframe, tack ref frames
                 if(mVelocity.empty() || mCurrentFrame.mnId<mnLastRelocFrameId+2)
                 {
                     bOK = TrackReferenceKeyFrame();
                 }
+                //I'm moving and in a uncertainy zone
                 else
                 {
                     bOK = TrackWithMotionModel();
+                    //if track with motion failed, try track with key frames
                     if(!bOK)
                         bOK = TrackReferenceKeyFrame();
                 }
@@ -398,7 +403,9 @@ void Tracking::Track()
         if(!mbOnlyTracking)
         {
             if(bOK)
+            {
                 bOK = TrackLocalMap();
+            }
         }
         else
         {
@@ -916,7 +923,7 @@ bool Tracking::TrackWithMotionModel()
             else if(mCurrentFrame.mvpMapPoints[i]->Observations()>0)
                 nmatchesMap++;
         }
-    }    
+    }
 
     if(mbOnlyTracking)
     {
