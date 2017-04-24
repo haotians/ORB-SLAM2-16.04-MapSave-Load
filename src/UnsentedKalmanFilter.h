@@ -1,8 +1,4 @@
 //this UKF is mainly based on cartographer from google
-
-
-
-
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -13,6 +9,10 @@
 #include "Eigen/Eigenvalues"
 
 
+
+
+namespace kalman_filter 
+{
 // Guassion distribution
 template <typename T, int N>
 class GaussianDistribution 
@@ -287,3 +287,7 @@ class UnscentedKalmanFilter {
                                 const StateType& target)>
       compute_delta_;
 };
+
+
+
+}//end namespace
